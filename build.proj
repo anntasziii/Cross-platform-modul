@@ -1,0 +1,39 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <LabName Condition="'$(LabName)' == ''">lab1</LabName> <!-- Значення за замовчуванням -->
+    <RunProject>$(MSBuildProjectDirectory)\$(LabName)\$(LabName).csproj</RunProject>
+    <TestDirectory>$(MSBuildProjectDirectory)\$(LabName).tests</TestDirectory>
+    <TestProject>$(MSBuildProjectDirectory)\$(LabName).tests\$(LabName).tests.csproj</TestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectFile Include="$(Solution)\*.csproj" />
+    <ProjectReference Include="$(LabName)\$(LabName).csproj" />
+  </ItemGroup>
+
+  <Target Name="Clean">
+    <RemoveDir Directories="$(OutputPath)" />
+  </Target>
+
+  <Target Name="LogPaths">
+    <Message Text="MSBuildProjectDirectory: $(MSBuildProjectDirectory)" Importance="high" />
+    <Message Text="RunProject: $(RunProject)" Importance="high" />
+    <Message Text="Project file exists: $([System.IO.File]::Exists($(RunProject)))" Importance="high" />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="LogPaths">
+    <MSBuild Projects="$(RunProject)" Targets="Restore;Build" Condition="Exists('$(RunProject)')" />
+    <Error Text="Project file not found: $(RunProject)" Condition="!Exists('$(RunProject)')" />
+  </Target>
+
+  <Target Name="Run" DependsOnTargets="Build">
+    <Message Text="Running project from: $(RunProject)" Importance="high" />
+    <Exec Command="dotnet run --project &quot;$(RunProject)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)\$(LabName)" />
+  </Target>
+
+  <Target Name="Test" DependsOnTargets="LogPaths">
+    <Message Text="Running tests from: $(TestProject)" Importance="high" />
+    <Exec Command="dotnet test &quot;$(TestProject)&quot; --logger &quot;console;verbosity=detailed&quot;" WorkingDirectory="$(TestDirectory)" />
+    <Error Text="Test project file not found: $(TestProject)" Condition="!Exists('$(TestProject)')" />
+  </Target>
+</Project>
