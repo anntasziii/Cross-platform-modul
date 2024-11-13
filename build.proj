@@ -1,14 +1,18 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <LabName Condition="'$(LabName)' == ''">lab1</LabName> <!-- Значення за замовчуванням -->
-    <RunProject>$(MSBuildProjectDirectory)\$(LabName)\$(LabName).csproj</RunProject>
-    <TestDirectory>$(MSBuildProjectDirectory)\$(LabName).tests</TestDirectory>
-    <TestProject>$(MSBuildProjectDirectory)\$(LabName).tests\$(LabName).tests.csproj</TestProject>
+    <LabName Condition="'$(ProgramName)' == ''">program</LabName> <!-- Значення за замовчуванням змінено на program -->
+    <RunProject>$(MSBuildProjectDirectory)/program/program.csproj</RunProject>
+    <TestDirectory>$(MSBuildProjectDirectory)/$(LabName).tests</TestDirectory>
+    <TestProject>$(TestDirectory)/$(LabName).tests.csproj</TestProject>
+    
+    <!-- Вказуємо правильні шляхи до INPUT.TXT і OUTPUT.TXT -->
+    <InputFile>$(MSBuildProjectDirectory)/program/INPUT.TXT</InputFile>
+    <OutputFile>$(MSBuildProjectDirectory)/program/OUTPUT.TXT</OutputFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectFile Include="$(Solution)\*.csproj" />
-    <ProjectReference Include="$(LabName)\$(LabName).csproj" />
+    <ProjectFile Include="$(RunProject)" />
+    <ProjectReference Include="$(RunProject)" />
   </ItemGroup>
 
   <Target Name="Clean">
@@ -19,6 +23,8 @@
     <Message Text="MSBuildProjectDirectory: $(MSBuildProjectDirectory)" Importance="high" />
     <Message Text="RunProject: $(RunProject)" Importance="high" />
     <Message Text="Project file exists: $([System.IO.File]::Exists($(RunProject)))" Importance="high" />
+    <Message Text="Input file exists: $([System.IO.File]::Exists($(InputFile)))" Importance="high" />
+    <Message Text="Output file exists: $([System.IO.File]::Exists($(OutputFile)))" Importance="high" />
   </Target>
 
   <Target Name="Build" DependsOnTargets="LogPaths">
@@ -28,7 +34,8 @@
 
   <Target Name="Run" DependsOnTargets="Build">
     <Message Text="Running project from: $(RunProject)" Importance="high" />
-    <Exec Command="dotnet run --project &quot;$(RunProject)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)\$(LabName)" />
+    <!-- Оновлений шлях до INPUT.TXT і передача OutputFile -->
+    <Exec Command="dotnet run --project &quot;$(RunProject)&quot; -- $(InputFile) $(OutputFile)" WorkingDirectory="$(MSBuildProjectDirectory)/$(LabName)" />
   </Target>
 
   <Target Name="Test" DependsOnTargets="LogPaths">
