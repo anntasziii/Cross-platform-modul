@@ -3,9 +3,9 @@ using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 using System.Collections.Generic;
-using Program1;
+using Program;
 
-namespace Program1.Tests
+namespace Program.Tests
 {
     public class HairSellingTests
     {

@@ -2,8 +2,10 @@
   <PropertyGroup>
     <LabName Condition="'$(ProgramName)' == ''">program</LabName> <!-- Значення за замовчуванням змінено на program -->
     <RunProject>$(MSBuildProjectDirectory)/program/program.csproj</RunProject>
-    <TestDirectory>$(MSBuildProjectDirectory)/$(LabName).tests</TestDirectory>
-    <TestProject>$(TestDirectory)/$(LabName).tests.csproj</TestProject>
+    
+    <!-- Оновлений шлях до тестів -->
+    <TestDirectory>$(MSBuildProjectDirectory)/program1.tests</TestDirectory> <!-- Замінили на правильну папку тестів -->
+    <TestProject>$(TestDirectory)/program1.tests.csproj</TestProject> <!-- Замінили на правильний шлях до тестів -->
     
     <!-- Вказуємо правильні шляхи до INPUT.TXT і OUTPUT.TXT -->
     <InputFile>$(MSBuildProjectDirectory)/program/INPUT.TXT</InputFile>
